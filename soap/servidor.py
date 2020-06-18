@@ -16,7 +16,11 @@ class servicios(ServiceBase):
         else:
             valido = "invalido"
             return valido
-        
+
+    @rpc(Integer, Integer, _returns = Integer)
+    def sumar(ctx, num1, num2):
+        suma = num1 + num2
+        return suma
        # for i in range(times):
         #    yield u'Hello, %s' % name
 
