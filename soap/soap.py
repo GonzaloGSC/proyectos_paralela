@@ -36,7 +36,7 @@ def decodificar(textoCodificado):
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     resultado=guess_type(nombreDelArchivo)
     if(resultado[0]=="application/vnd.ms-excel" and re.search(".csv$" , nombreDelArchivo) ): #Detecta Mime del archivo
-        print("MIME detectado = text/csv("+str(resultado[0])+")")
+        print("MIME detectado = text/csv ("+str(resultado[0])+")")
         return "text/csv"
     else:
         print("MIME detectado = "+str(resultado[0]))
@@ -44,12 +44,13 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
         return resultado[0]
 
 def revisarContenidoCSV(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
-    archivo64 = open(ArchivoCodificado,"r")
+    dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
+    archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
     mensaje = archivo64.read(1024)
     archivo64.close()
     mensaje = decodificar(mensaje)
     salida = open("temporalRevisionIngreso.txt", "w")
-    a=salida.write(str(mensaje))
+    a = salida.write(str(mensaje))
     salida.close()
     archivoTemporal = open("temporalRevisionIngreso.txt","r")
     contador = 0
