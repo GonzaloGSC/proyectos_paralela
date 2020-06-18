@@ -3,8 +3,8 @@
 class servicios{
     
     public function informacionActualServer($variable){
-        $fecha ="miguel reculiao te meo";
-        //$fecha = date("F j, Y, g:i:s a");
+        
+        $fecha = date("F j, Y, g:i:s a");
         
         $datos = $variable->mensaje." ".$fecha;
         
