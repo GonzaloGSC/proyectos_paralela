@@ -29,9 +29,7 @@ def decodificar(textoCodificado):
         textoDecode = textoDecode.split("\n") 
         return textoDecode
     except:
-        print("Error: Falla inesperada en codificación.")
-        return 0
-
+        print("Error: Falla inesperada en codificación. Revisar tamaño de lectura en funcion revisarContenidoCSV (recomendado .read(1012))")
 
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     resultado=guess_type(nombreDelArchivo)
@@ -46,7 +44,7 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
 def revisarContenidoCSV(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
     dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
     archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
-    mensaje = archivo64.read(1024)
+    mensaje = archivo64.read(1012)# Tamaño de lectura para revisar, recomendado = 1012
     archivo64.close()
     mensaje = decodificar(mensaje)
     salida = open("temporalRevisionIngreso.txt", "w")
@@ -54,6 +52,7 @@ def revisarContenidoCSV(ArchivoCodificado): # Revisa el contenido del archivo pa
     salida.close()
     archivoTemporal = open("temporalRevisionIngreso.txt","r")
     contador = 0
+    # print(mensaje)
     try:
         revision = csv.Sniffer().sniff(archivoTemporal.read(),";") #Realiza varios testeos sobre el archivo (separadores, delimitadores, etc.) archivo.read(1024) Fuente: https://docs.python.org/3/library/csv.html
         archivoTemporal.close()
@@ -99,6 +98,8 @@ def revisarContenidoCSV(ArchivoCodificado): # Revisa el contenido del archivo pa
                 print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
         print("Error: Separadores y delimitadores no corresponden. El archivo no corresponde al formato admitido, por favor, reintentar.")
         return 0
+
+
 
 ######################################################################## Definicion de variables ########################################################################
 
