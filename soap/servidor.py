@@ -39,6 +39,10 @@ class servicios(ServiceBase):
         else:
             verdadero = False
             return verdadero
+
+    @rpc(Attachment, _returns = Unicode)
+    def archivo(ctx, documento):
+        return "funciona"
     #   # for i in range(times):
     #    #    yield u'Hello, %s' % name
 
