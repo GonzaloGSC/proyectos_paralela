@@ -14,15 +14,15 @@ import operator
 
 ######################################################################## SECTOR DE FUNCIONES ########################################################################
 
-def codificar(nombreDelArchivo):
-    # Lectura de archivo de puntajes sin codificar
-    archivoPuntajes = open("puntajesNoEncode.csv", "r")
-    texto=archivoPuntajes.read()
-    archivoPuntajes.close()
-    # Codificacion
-    base64_cadena_bytes = base64.b64encode(texto.encode('ascii'))
-    texto_base64 = base64_cadena_bytes.decode('ascii')
-    return texto_base64
+# def codificar(nombreDelArchivo):
+#     # Lectura de archivo de puntajes sin codificar
+#     archivoPuntajes = open("puntajesNoEncode.csv", "r")
+#     texto=archivoPuntajes.read()
+#     archivoPuntajes.close()
+#     # Codificacion
+#     base64_cadena_bytes = base64.b64encode(texto.encode('ascii'))
+#     texto_base64 = base64_cadena_bytes.decode('ascii')
+#     return texto_base64
     
 def decodificar(textoCodificado):
     try:
@@ -32,7 +32,7 @@ def decodificar(textoCodificado):
         return textoDecode
     except:
         print("Error: Falla inesperada en decodificación.")
-
+# programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     resultado=guess_type(nombreDelArchivo)
     if(resultado[0]=="application/vnd.ms-excel" and re.search(".csv$" , nombreDelArchivo) ): #Detecta Mime del archivo
@@ -72,15 +72,15 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
             for caracter in linea: #Revision de cada caracter ingresado
                 contador = contador + 1
                 if (contador>32):
-                    print("Error: Excedido tamaño de filas. El archivo no corresponde al formato admitido, por favor, reintentar.")
+                    print("Error: Excedido tamaño de filas, existe al menos una fila mal ingresada en el archivo. El archivo no corresponde al formato admitido, por favor, reintentar.")
                     return 0
                 if ((caracter!=";" and caracter.isnumeric()) or caracter==";"):
                     pass
                 else:
-                    print("Error: Letras detectadas en contenido. El archivo no corresponde al formato admitido, por favor, reintentar.")
+                    print("Error: Letras detectadas en contenido, el archivo debe contener solo numeros y separadores. El archivo no corresponde al formato admitido, por favor, reintentar.")
                     return 0
             if (contador!=0 and contador<32):
-                print("Error: Insuficiente tamaño de filas. El archivo no corresponde al formato admitido, por favor, reintentar.")
+                print("Error: Insuficiente tamaño de filas, existe al menos una fila mal ingresada en el archivo. El archivo no corresponde al formato admitido, por favor, reintentar.")
                 return 0
             else:
                 contador = 0
@@ -147,7 +147,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     for datosPostulante in arregloDePuntajesPsu:
         
         arregloDePuntajesPsu[contadorPostulante]=datosPostulante.split(";")
-
+        
         if (len(arregloDePuntajesPsu[contadorPostulante])==7):
             arregloDePuntajesPsu[contadorPostulante][0]=int(arregloDePuntajesPsu[contadorPostulante][0])
             arregloDePuntajesPsu[contadorPostulante][1]=float(arregloDePuntajesPsu[contadorPostulante][1])
@@ -238,7 +238,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     while(b<125):
         matriculadosPorCarrera[3].append([lista[b][0],lista[b][4]])
         b=b+1
-    print("Carrera 5..")
+    print("Carrera 5...")
     lista = ponderacionCarreras[s:s+c4]
     s=s+len(lista)
     lista.sort(key=lambda x: x[4], reverse=1)
@@ -465,5 +465,4 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     
 # if __name__ == '__main__':
 #     p = Pool(4)
-programaPrincipal("PENDIENTE ESTO","text/csv","puntajes.csv","puntajesEncode.txt")
-print("TERMINE CTMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+# programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
