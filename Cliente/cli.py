@@ -10,4 +10,10 @@ print (cad)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 archivo = open(dir_path+"/"+"documentos.csv","r")
-cadena = archivo.read()
+narchivo = archivo.read()
+
+hola= base64.encodestring(narchivo.encode('ascii'))
+
+#print (hola)
+documento = wsdl.service.webarchivo(narchivo)
+print (documento)

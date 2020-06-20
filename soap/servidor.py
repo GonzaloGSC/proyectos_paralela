@@ -42,7 +42,7 @@ class servicios(ServiceBase):
 
     @rpc(Unicode, _returns = Unicode)
     def webarchivo(ctx, documento):
-        return documento
+        return "hola"
 
 
 
