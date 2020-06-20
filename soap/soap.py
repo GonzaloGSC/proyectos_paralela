@@ -59,36 +59,36 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
         wea=mensaje[1900:]
         # print(str(wea))
         # print("LARGO = "+ str(len(mensaje)))
-        if (len(mensaje)<2055):
+        if (len(mensaje)<2055): # Verifica el largo mini aceptado de los datos de entrada
             print("Error: El numero de datos es menor al minimo aceptado, se necesitan al menos 2055 lineas de ruts y puntajes. El archivo no corresponde al formato admitido, por favor, reintentar.")
             return 0
         if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
             try:
-                os.unlink("temporalRevisionIngreso.txt")
+                os.unlink("temporalRevisionIngreso.txt") # Eliminacion del archivo temporal
             except OSError as e:
                 print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
         elif (platform.system()=="Windows"):
             try:
-                os.remove("temporalRevisionIngreso.txt")
+                os.remove("temporalRevisionIngreso.txt") # Eliminacion del archivo temporal
             except OSError as e:
                 print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
         for linea in mensaje: #Revision de cada linea ingresada
             for caracter in linea: #Revision de cada caracter ingresado
                 contador = contador + 1
-                if (contador>32):
+                if (contador>32): # Detecta si la fila de ingreso es mas larga de lo debido, el largo correcto es de 32 caracteres (Ej. 19291586;123;123;123;123;123;123)
                     print("Error: Excedido tamaño de filas, existe al menos una fila mal ingresada en el archivo. El archivo no corresponde al formato admitido, por favor, reintentar.")
                     return 0
-                if ((caracter!=";" and caracter.isnumeric()) or caracter==";"):
+                if ((caracter!=";" and caracter.isnumeric()) or caracter==";"): # Detecta si el archivo ingresado contiene algun caracter que no sea numeros o punto y coma (;), si es así, detecta la falla
                     pass
                 else:
                     print("Error: Letras detectadas en contenido, el archivo debe contener solo numeros y separadores. El archivo no corresponde al formato admitido, por favor, reintentar.")
                     return 0
-            if (contador!=0 and contador<32):
+            if (contador!=0 and contador<32): # Detecta si la fila de ingreso es corta, el largo correcto es de 32 caracteres (Ej. 19291586;123;123;123;123;123;123)
                 print("Error: Insuficiente tamaño de filas, existe al menos una fila mal ingresada en el archivo. El archivo no corresponde al formato admitido, por favor, reintentar.")
                 return 0
             else:
                 contador = 0
-        print("El archivo es correcto.")
+        print("El archivo es correcto.") # Si finalmente el archivo ingresado pasa todos los filtros, es aceptado.
         return 1
     except csv.Error:
         archivoTemporal.close()
@@ -102,7 +102,7 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
                 os.remove("temporalRevisionIngreso.txt")
             except OSError as e:
                 print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
-        print("Error: Separadores y delimitadores no corresponden. El archivo no corresponde al formato admitido, por favor, reintentar.")
+        print("Error: Separadores y delimitadores no corresponden. El archivo no corresponde al formato admitido, por favor, reintentar.") # Excepcion preparada para la deteccion de otro separador en el csv o un error en la revision de este.
         return 0
 
 ######################################################################## Programa principal  ########################################################################
@@ -160,9 +160,9 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
             np = arregloDePuntajesPsu[contadorPostulante]
 
             ponderacionesDelAlumno=[]
-            if (np[5]>=np[6] and (np[3]+np[4])/2>450):
+            if (np[5]>=np[6] and (np[3]+np[4])/2>450): # Verifica que el puntaje de Ciencias sea mayor o igual al de Historia (np[5]>=np[6]) y que el promedio de matematicas y lenguaje sea mayor a 450
                 ponderacionesDelAlumno.append(np[0])
-                ponderacionesDelAlumno.append(round(np[1]*0.15+np[2]*0.2+np[3]*0.25+np[4]*0.3+np[5]*0.1,2))
+                ponderacionesDelAlumno.append(round(np[1]*0.15+np[2]*0.2+np[3]*0.25+np[4]*0.3+np[5]*0.1,2)) # Calculo de ponderaciones por grupo de carreras (comparar con excel)
                 ponderacionesDelAlumno.append(round(np[1]*0.2+np[2]*0.2+np[3]*0.1+np[4]*0.4+np[5]*0.1,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.2+np[2]*0.2+np[3]*0.15+np[4]*0.3+np[5]*0.15,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.1+np[2]*0.2+np[3]*0.3+np[4]*0.3+np[5]*0.1,2))
@@ -174,7 +174,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
                 ponderacionesDelAlumno.append(round(np[1]*0.1+np[2]*0.4+np[3]*0.1+np[4]*0.3+np[5]*0.1,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.2+np[2]*0.3+np[3]*0.1+np[4]*0.2+np[5]*0.2,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.1+np[2]*0.25+np[3]*0.35+np[4]*0.2+np[5]*0.1,2))
-            elif((np[3]+np[4])/2>450):
+            elif((np[3]+np[4])/2>450): # Si lo anterior no es ejecutado, revisa que la razon de ello sea que ciencias es menor a historia en puntaje, si es el caso, considera historia en el calculo (np[6])
                 ponderacionesDelAlumno.append(np[0])
                 ponderacionesDelAlumno.append(round(np[1]*0.15+np[2]*0.2+np[3]*0.25+np[4]*0.3+np[6]*0.1,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.2+np[2]*0.2+np[3]*0.1+np[4]*0.4+np[6]*0.1,2))
@@ -188,11 +188,14 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
                 ponderacionesDelAlumno.append(round(np[1]*0.1+np[2]*0.4+np[3]*0.1+np[4]*0.3+np[6]*0.1,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.2+np[2]*0.3+np[3]*0.1+np[4]*0.2+np[6]*0.2,2))
                 ponderacionesDelAlumno.append(round(np[1]*0.1+np[2]*0.25+np[3]*0.35+np[4]*0.2+np[6]*0.1,2))
-            ponderacionCarreras.append(ponderacionesDelAlumno) 
+            ponderacionCarreras.append(ponderacionesDelAlumno) # Se guarda el rut del estudiante junto a todas sus ponderaciones a cada grupo de carreras
         contadorPostulante = contadorPostulante + 1  
     print("Asignando carreras a los mejores postulantes...")
     print("Carrera 1...")
     largo=len(ponderacionCarreras)
+    # La cantidad de variables cx, se debe a que es necesario calcular la proporción de cupos disponibles por carrera vs los ingresos totales disponibles(2055), 
+    # en base a esa proporción se calcula la cantidad de alumnos que intentan postular a cada carrera (segun el tamaño del archivo de postulantes), una situacion interesante 
+    # que se presenta, es el ingreso de datos minimo al programa (2055), ya que la cantidad de alumnos que postulan a cada carrera sera la misma de los cupos que cada carrea tenga
     c1=int(35/2055*largo)
     c2=int(80/2055*largo)
     c3=int(125/2055*largo)
@@ -207,14 +210,14 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     c12=int(130/2055*largo)
     c13=int(200/2055*largo)
     c14=int(105/2055*largo)
-    lista = ponderacionCarreras[0:c1]
-    s=len(lista)
-    lista.sort(key=lambda x: x[1], reverse=1)
-    b=0
-    while(b<35):
-        matriculadosPorCarrera[0].append([lista[b][0],lista[b][1]])
+    lista = ponderacionCarreras[0:c1] #En esta lista se van guardando los postulantes a cada carrera (Ojo, postulantes, no matriculados).
+    s=len(lista) # Suma total de procesados, su funcion es evitar repeticiones de matriculados en distintas carreras.
+    lista.sort(key=lambda x: x[1], reverse=1) # Se ordena el array lista ([[12345672;123],[19291586;124]]) en base al dato lista[n][1](Puntaje en primer grupo de carreras, esto varia por cada una), donde n es cualquier numero int. De esta forma, se guardan los matriculados por orden de puntaje.
+    b=0 # Contador de matriculas
+    while(b<35): # Bucle que se repite segun los cupos por carrera, para realizar ese numero de matriculas
+        matriculadosPorCarrera[0].append([lista[b][0],lista[b][1]]) # Ingresa un alumno a la carrera, con prioridad sobre los mejores puntajes
         b=b+1
-    print("Carrera 2...")
+    print("Carrera 2...") # Se repite todo el proceso anterior por cada carrera....
     lista = ponderacionCarreras[s:s+c1]
     s=s+len(lista)
     lista.sort(key=lambda x: x[2], reverse=1)
@@ -241,7 +244,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 5...")
     lista = ponderacionCarreras[s:s+c4]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[4], reverse=1)
+    lista.sort(key=lambda x: x[4], reverse=1) 
     b=0
     while(b<30):
         matriculadosPorCarrera[4].append([lista[b][0],lista[b][4]])
@@ -249,7 +252,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 6...")
     lista = ponderacionCarreras[s:s+c5]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[4], reverse=1)
+    lista.sort(key=lambda x: x[4], reverse=1) 
     b=0
     while(b<90):
         matriculadosPorCarrera[5].append([lista[b][0],lista[b][4]])
@@ -257,7 +260,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 7...")
     lista = ponderacionCarreras[s:s+c6]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[4], reverse=1)
+    lista.sort(key=lambda x: x[4], reverse=1) 
     b=0
     while(b<25):
         matriculadosPorCarrera[6].append([lista[b][0],lista[b][4]])
@@ -265,7 +268,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 8...")
     lista = ponderacionCarreras[s:s+c7]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[5], reverse=1)
+    lista.sort(key=lambda x: x[5], reverse=1) 
     b=0
     while(b<100):
         matriculadosPorCarrera[7].append([lista[b][0],lista[b][5]])
@@ -273,7 +276,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 9...")
     lista = ponderacionCarreras[s:s+c7]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[6], reverse=1)
+    lista.sort(key=lambda x: x[6], reverse=1) 
     b=0
     while(b<100):
         matriculadosPorCarrera[8].append([lista[b][0],lista[b][6]])
@@ -281,7 +284,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 10...")
     lista = ponderacionCarreras[s:s+c7]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[6], reverse=1)
+    lista.sort(key=lambda x: x[6], reverse=1) 
     b=0
     while(b<100):
         matriculadosPorCarrera[9].append([lista[b][0],lista[b][6]])
@@ -289,7 +292,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 11...")
     lista = ponderacionCarreras[s:s+c4]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[7], reverse=1)
+    lista.sort(key=lambda x: x[7], reverse=1) 
     b=0
     while(b<30):
         matriculadosPorCarrera[10].append([lista[b][0],lista[b][7]])
@@ -297,7 +300,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 12...")
     lista = ponderacionCarreras[s:s+c8]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[8], reverse=1)
+    lista.sort(key=lambda x: x[8], reverse=1) 
     b=0
     while(b<60):
         matriculadosPorCarrera[11].append([lista[b][0],lista[b][8]])
@@ -305,7 +308,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 13...")
     lista = ponderacionCarreras[s:s+c4]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[8], reverse=1)
+    lista.sort(key=lambda x: x[8], reverse=1) 
     b=0
     while(b<30):
         matriculadosPorCarrera[12].append([lista[b][0],lista[b][8]])
@@ -313,7 +316,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 14...")
     lista = ponderacionCarreras[s:s+c2]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[9], reverse=1)
+    lista.sort(key=lambda x: x[9], reverse=1) 
     b=0
     while(b<80):
         matriculadosPorCarrera[13].append([lista[b][0],lista[b][9]])
@@ -321,7 +324,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 15...")
     lista = ponderacionCarreras[s:s+c9]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[9], reverse=1)
+    lista.sort(key=lambda x: x[9], reverse=1) 
     b=0
     while(b<40):
         matriculadosPorCarrera[14].append([lista[b][0],lista[b][9]])
@@ -329,7 +332,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 16...")
     lista = ponderacionCarreras[s:s+c7]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[10], reverse=1)
+    lista.sort(key=lambda x: x[10], reverse=1) 
     b=0
     while(b<100):
         matriculadosPorCarrera[15].append([lista[b][0],lista[b][10]])
@@ -337,7 +340,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 17...")
     lista = ponderacionCarreras[s:s+c10]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[10], reverse=1)
+    lista.sort(key=lambda x: x[10], reverse=1) 
     b=0
     while(b<65):
         matriculadosPorCarrera[16].append([lista[b][0],lista[b][10]])
@@ -345,7 +348,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 18...")
     lista = ponderacionCarreras[s:s+c11]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[11], reverse=1)
+    lista.sort(key=lambda x: x[11], reverse=1) 
     b=0
     while(b<95):
         matriculadosPorCarrera[17].append([lista[b][0],lista[b][11]])
@@ -353,7 +356,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 19...")
     lista = ponderacionCarreras[s:s+c6]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<25):
         matriculadosPorCarrera[18].append([lista[b][0],lista[b][12]])
@@ -361,7 +364,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 20...")
     lista = ponderacionCarreras[s:s+c6]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<25):
         matriculadosPorCarrera[19].append([lista[b][0],lista[b][12]])
@@ -369,7 +372,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 21...")
     lista = ponderacionCarreras[s:s+c12]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<130):
         matriculadosPorCarrera[20].append([lista[b][0],lista[b][12]])
@@ -377,7 +380,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 22...")
     lista = ponderacionCarreras[s:s+c13]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<200):
         matriculadosPorCarrera[21].append([lista[b][0],lista[b][12]])
@@ -385,7 +388,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 23...")
     lista = ponderacionCarreras[s:s+c8]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<60):
         matriculadosPorCarrera[22].append([lista[b][0],lista[b][12]])
@@ -393,7 +396,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 24...")
     lista = ponderacionCarreras[s:s+c2]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<80):
         matriculadosPorCarrera[23].append([lista[b][0],lista[b][12]])
@@ -401,7 +404,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 25...")
     lista = ponderacionCarreras[s:s+c5]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<90):
         matriculadosPorCarrera[24].append([lista[b][0],lista[b][12]])
@@ -409,7 +412,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 26...")
     lista = ponderacionCarreras[s:s+c8]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<60):
         matriculadosPorCarrera[25].append([lista[b][0],lista[b][12]])
@@ -417,7 +420,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 27...")
     lista = ponderacionCarreras[s:s+c14]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     b=0
     while(b<105):
         matriculadosPorCarrera[26].append([lista[b][0],lista[b][12]])
@@ -426,7 +429,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     print("Carrera 28...")
     lista = ponderacionCarreras[s:s+c8]
     s=s+len(lista)
-    lista.sort(key=lambda x: x[12], reverse=1)
+    lista.sort(key=lambda x: x[12], reverse=1) 
     while(b<60):
         matriculadosPorCarrera[27].append([lista[b][0],lista[b][12]])
         b=b+1
