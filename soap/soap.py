@@ -32,10 +32,11 @@ def decodificar(textoCodificado):
         return textoDecode
     except:
         print("Error: Falla inesperada en decodificación.")
+
 # programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     resultado=guess_type(nombreDelArchivo)
-    if(resultado[0]=="application/vnd.ms-excel" and re.search(".csv$" , nombreDelArchivo) ): #Detecta Mime del archivo
+    if(resultado[0]=="application/vnd.ms-excel" and re.search(".csv$" , nombreDelArchivo)): #Detecta Mime del archivo
         print("MIME detectado = text/csv ("+str(resultado[0])+")")
         return "text/csv"
     else:
@@ -46,7 +47,7 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
 def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
     dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
     archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
-    mensaje = archivo64.read(1012)# Tamaño de lectura para revisar, recomendado = 1012 BORRAR TEXTO COMENTADO EN CASOS dE
+    mensaje = archivo64.read(100012)# Tamaño de lectura para revisar, recomendado = 1012 BORRAR TEXTO COMENTADO EN CASOS dE
     archivo64.close()
     mensaje = decodificar(mensaje)
     salida = open("temporalRevisionIngreso.txt", "w")
@@ -58,6 +59,12 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
     try:
         revision = csv.Sniffer().sniff(archivoTemporal.read(),";") #Realiza varios testeos sobre el archivo (separadores, delimitadores, etc.) archivo.read(1024) Fuente: https://docs.python.org/3/library/csv.html
         archivoTemporal.close()
+        wea=mensaje[1900:]
+        # print(str(wea))
+        # print("LARGO = "+ str(len(mensaje)))
+        if (len(mensaje)<2055):
+            print("Error: El numero de datos es menor al minimo aceptado, se necesitan al menos 2055 lineas de ruts y puntajes. El archivo no corresponde al formato admitido, por favor, reintentar.")
+            return 0
         if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
             try:
                 os.unlink("temporalRevisionIngreso.txt")
@@ -465,4 +472,4 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     
 # if __name__ == '__main__':
 #     p = Pool(4)
-# programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
+programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
