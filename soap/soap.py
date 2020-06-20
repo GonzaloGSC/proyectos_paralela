@@ -1,16 +1,13 @@
 
 ######################################################################## SECTOR DE IMPORTS ########################################################################
 
-from mimetypes import guess_type, guess_extension
-import re
-import base64 
-import csv
-import platform # Usado para detectar el SO
-import os # Usado para eliminar archivo temporal de revisión
-import operator
+from mimetypes import guess_type, guess_extension # Utilizado para trabajar el MIME de archivos, comprobacion.
+import re # Utilizado para .search(), busqueda de extencion en archivos
+import base64 # Utilizado para trabajar con la codificación y decodificación del archivo
+import csv # Utilizado para revisar el archivo decodificado, para detectar separadores y demas
+import platform # Utilizado para detectar el SO
+import os # Utilizado para eliminar archivo temporal de revisión
 
-# from multiprocessing import Pool
-# import time
 
 ######################################################################## SECTOR DE FUNCIONES ########################################################################
 
@@ -24,14 +21,14 @@ import operator
 #     texto_base64 = base64_cadena_bytes.decode('ascii')
 #     return texto_base64
     
-def decodificar(textoCodificado):
+def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando en primera instancia, la codificacion ascii para luego decodificar correctamente la informacion desde base64
     try:
         cadena_bytes = base64.b64decode(textoCodificado.encode('ascii'))
         textoDecode = cadena_bytes.decode('ascii')
-        textoDecode = textoDecode.split("\n") 
+        textoDecode = textoDecode.split("\n") # Separa el string en los saltos de linea
         return textoDecode
     except:
-        print("Error: Falla inesperada en decodificación.")
+        print("Error: Falla inesperada en decodificación, revise la codificacion base64 del archivo, esta puede haber sido cortada. Otra opcion, es modificar la cantidad de bytes aceptados en la funcion: revisarContenidoBase64, linea: mensaje = archivo64.read(100012)")
 
 # programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
@@ -47,7 +44,7 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
 def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
     dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
     archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
-    mensaje = archivo64.read(100012)# Tamaño de lectura para revisar, recomendado = 1012 BORRAR TEXTO COMENTADO EN CASOS dE
+    mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
     archivo64.close()
     mensaje = decodificar(mensaje)
     salida = open("temporalRevisionIngreso.txt", "w")
@@ -108,7 +105,7 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
         print("Error: Separadores y delimitadores no corresponden. El archivo no corresponde al formato admitido, por favor, reintentar.")
         return 0
 
-######################################################################## Declaracion del SERVICIO  ########################################################################
+######################################################################## Programa principal  ########################################################################
 
 # TAMAÑO MINIMO DE 2055 ESTUDIANTES EN EL INGRESO DE DATOS
 
@@ -117,20 +114,20 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     #Declaracion de variables
 
     matriculadosPorCarrera=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]] # Contendrá todos los estudiantes ya matriculados en una carrera, ordenados segun carrera
-    # print(matriculadosPorCarrera)
     ponderacionCarreras = [] # contiene los grupos de carrera segun criterios de ingreso a ellas.
-    # grupo1 = Contendrá los mejores puntajes ordenados de las carreras: 21089
-    # grupo2 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21002
-    # grupo3 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21012
-    # grupo4 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21048, 21015, 21081 y 21082
-    # grupo5 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21047
-    # grupo6 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21074 y 21032
-    # grupo7 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21087
-    # grupo8 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21073 y 21039
-    # grupo9 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21080 y 21083
-    # grupo10 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21024 y 21023
-    # grupo11 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21043
-    # grupo12 = [] # Contendrá los mejores puntajes ordenados de las carreras: 21046, 21071, 21041, 21076, 21049, 21075, 21096, 21031, 21030 y 21045
+    # IMPORTANTE: Se separaron las ponderaciones exigidas de las carreras en 12 grupos, ya que habian carreras con la misma exigencia, a continuacion se describen:
+    # grupo1 Contendrá los mejores puntajes ordenados de las carreras: 21089
+    # grupo2 Contendrá los mejores puntajes ordenados de las carreras: 21002
+    # grupo3 Contendrá los mejores puntajes ordenados de las carreras: 21012
+    # grupo4 Contendrá los mejores puntajes ordenados de las carreras: 21048, 21015, 21081 y 21082
+    # grupo5 Contendrá los mejores puntajes ordenados de las carreras: 21047
+    # grupo6 Contendrá los mejores puntajes ordenados de las carreras: 21074 y 21032
+    # grupo7 Contendrá los mejores puntajes ordenados de las carreras: 21087
+    # grupo8 Contendrá los mejores puntajes ordenados de las carreras: 21073 y 21039
+    # grupo9 Contendrá los mejores puntajes ordenados de las carreras: 21080 y 21083
+    # grupo10 Contendrá los mejores puntajes ordenados de las carreras: 21024 y 21023
+    # grupo11 Contendrá los mejores puntajes ordenados de las carreras: 21043
+    # grupo12 Contendrá los mejores puntajes ordenados de las carreras: 21046, 21071, 21041, 21076, 21049, 21075, 21096, 21031, 21030 y 21045
 
     #Comprobacion de datos ingresados
 
@@ -141,15 +138,12 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
 
     #Operacion sobre datos
 
-    
     dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
     archivo64 = open(dir_path+"/"+datosBase64,"r")
     mensaje = archivo64.read()
     archivo64.close()
     arregloDePuntajesPsu = decodificar(mensaje)
-
     contadorPostulante = 0
-    # print(arregloDePuntajesPsu)
     print("Obteniendo ponderaciones por estudiante a cada carrera...")
     for datosPostulante in arregloDePuntajesPsu:
         
@@ -198,7 +192,6 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
         contadorPostulante = contadorPostulante + 1  
     print("Asignando carreras a los mejores postulantes...")
     print("Carrera 1...")
-    # matriculadosPorCarrera=[[35],[35],[80],[125],[30],[90],[25],[100],[100],[100],[30],[60],[30],[80],[40],[100],[65],[95],[25],[25],[130],[200],[60],[80],[90],[60],[105],[60]] # Contendrá todos los ya en una carrera alumnos matriculados
     largo=len(ponderacionCarreras)
     c1=int(35/2055*largo)
     c2=int(80/2055*largo)
@@ -216,7 +209,7 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
     c14=int(105/2055*largo)
     lista = ponderacionCarreras[0:c1]
     s=len(lista)
-    ponderacionCarreras.sort(key=lambda x: x[1], reverse=1)
+    lista.sort(key=lambda x: x[1], reverse=1)
     b=0
     while(b<35):
         matriculadosPorCarrera[0].append([lista[b][0],lista[b][1]])
@@ -439,37 +432,4 @@ def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE E
         b=b+1
     print(matriculadosPorCarrera)
 
-
-            # print(ponderacionesDelAlumno)
-            # grupoMasAltoPuntaje = max(ponderacionesDelAlumno,key=float)
-            
-            # grupoCarreras[arregloGrupoCarreras.index(grupoMasAltoPuntaje)].append([np[0],grupoMasAltoPuntaje])
-            
-    
-    # for i in range(0,12):
-    #     if (len(grupoCarreras[i])):
-    #         grupoCarreras[i].sort(key=lambda x: x[1], reverse=1)
-
-    
-    # for a in matriculadosPorCarrera:
-    #     for b in 
-            
-
-
-        
-    # print(grupoCarreras[0])
-    # print(grupoCarreras[1])
-    # print(grupoCarreras[2])
-    # print(grupoCarreras[3])
-    # print(grupoCarreras[4])
-    # print(grupoCarreras[5])
-    # print(grupoCarreras[6])
-    # print(grupoCarreras[7])
-    # print(grupoCarreras[8])
-    # print(grupoCarreras[9])
-    # print(grupoCarreras[10])
-    # print(grupoCarreras[11])
-    
-# if __name__ == '__main__':
-#     p = Pool(4)
 programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
