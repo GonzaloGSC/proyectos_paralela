@@ -9,6 +9,14 @@ def codificar(textoSinCodificar):
     texto_base64 = base64_cadena_bytes.decode('ascii')
     return texto_base64
 
+def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando en primera instancia, la codificacion ascii para luego decodificar correctamente la informacion desde base64
+    try:
+        cadena_bytes = base64.b64decode(textoCodificado.encode('ascii'))
+        textoDecode = cadena_bytes.decode('ascii')
+        textoDecode = textoDecode.split("\n") # Separa el string en los saltos de linea
+        return textoDecode
+    except:
+        print("Error: Falla inesperada en decodificación, revise la codificacion base64 del archivo, esta puede haber sido cortada.")
 
 def generarXlsx(rutss,puntajess):
         dir_path = os.path.dirname(os.path.realpath(__file__))
