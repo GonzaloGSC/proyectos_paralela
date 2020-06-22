@@ -26,7 +26,7 @@ def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando
         textoDecode = textoDecode.split("\n") # Separa el string en los saltos de linea
         return textoDecode
     except:
-        print("Error: Falla inesperada en decodificación, revise la codificacion base64 del archivo, esta puede haber sido cortada. Otra opcion, es modificar la cantidad de bytes aceptados en la funcion: revisarContenidoBase64, linea: mensaje = archivo64.read(100012)")
+        print("Error: Falla inesperada en decodificación, revise la codificacion base64 del archivo, esta puede haber sido cortada.")
 
 def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingresado. Retorna el MIME de csv cuando es correcto. fuente: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     resultado=guess_type(nombreDelArchivo)
