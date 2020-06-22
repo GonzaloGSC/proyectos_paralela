@@ -38,7 +38,7 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
         print("Error: MIME Incorrecto, debe utilizar text/csv. El archivo no corresponde al formato admitido, por favor, reintentar.")
         return resultado[0]
 
-def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
+def revisarContenidoBase64(TextoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
     # dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
     # archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
     # mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
@@ -49,16 +49,13 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
     salida.close()
     archivoTemporal = open("temporalRevisionIngreso.txt","r")
     contador = 0
-    print(mensaje)
     try:
         revision = csv.Sniffer().sniff(archivoTemporal.read(),";") #Realiza varios testeos sobre el archivo (separadores, delimitadores, etc.) archivo.read(1024) Fuente: https://docs.python.org/3/library/csv.html
-        mensaje = archivo64.read()
+        # mensaje = archivo64.read()
         mensaje = decodificar(mensaje)
-        archivo64.close()
+        # archivo64.close()
         archivoTemporal.close()
-        # if (len(mensaje)<2055): # Verifica el largo mini aceptado de los datos de entrada
-        #     print("Error: El numero de datos es menor al minimo aceptado, se necesitan al menos 2055 lineas de ruts y puntajes. El archivo no corresponde al formato admitido, por favor, reintentar.")
-        #     return 0
+
         if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
             try:
                 os.unlink("temporalRevisionIngreso.txt") # Eliminacion del archivo temporal
@@ -88,7 +85,7 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
         print("El archivo es correcto.") # Si finalmente el archivo ingresado pasa todos los filtros, es aceptado.
         return 1 #Aprovechando la instancia, devuelve la informacion ya decodificada
     except csv.Error:
-        archivo64.close()
+        # archivo64.close()
         archivoTemporal.close()
         if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
             try:
@@ -144,11 +141,11 @@ class servicios(ServiceBase):
         arregloDePuntajesPsu = decodificar(datosBase64)
         ########### OPERACION SOBRE DATOS
 
-        dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
-        archivo64 = open(dir_path+"/"+datosBase64,"r")
-        mensaje = archivo64.read()
-        archivo64.close()
-        # arregloDePuntajesPsu = decodificar(mensaje)
+        # dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
+        # archivo64 = open(dir_path+"/"+datosBase64,"r")
+        mensaje = datosBase64
+        # archivo64.close()
+        arregloDePuntajesPsu = decodificar(mensaje)
         contadorPostulante = 0
         print("Obteniendo ponderaciones por estudiante a cada carrera...")
         for datosPostulante in arregloDePuntajesPsu:
