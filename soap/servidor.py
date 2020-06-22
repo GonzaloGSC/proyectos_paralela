@@ -39,11 +39,11 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
         return resultado[0]
 
 def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
-    dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
-    archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
-    mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
+    # dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
+    # archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
+    # mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
     
-    mensaje = decodificar(mensaje)
+    mensaje = ArchivoCodificado
     salida = open("temporalRevisionIngreso.txt", "w")
     a = salida.write(str(mensaje))
     salida.close()
@@ -106,7 +106,10 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
 ######################################################################## Programa principal  ########################################################################
 
 class servicios(ServiceBase):
-    
+    @rpc(Unicode, Unicode, _returns = Unicode)
+    def cadena(ctx, cad1, cad2):
+        cado = cad1 + cad2
+        return cado
     @rpc(Unicode, Unicode, Unicode, _returns = Iterable(Unicode))
     def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#Funcion de consumo
 
@@ -658,7 +661,7 @@ class servicios(ServiceBase):
                 a=0
             else:
                 a=a+1
-        # yield "hola"
+        yield "hola"
         ########### CREACION DE XLSX (SOLO ESTARA EN EL CLIENTE... por ahora..)
  
         # print("Generando xlsx...")

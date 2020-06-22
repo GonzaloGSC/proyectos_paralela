@@ -2,12 +2,20 @@ from suds.client import Client
 import base64
 import os
 wsdl = Client('http://localhost:8000/?wsdl')
-print (wsdl.service.metodo(arg1,arg2))
 
-def codificar(textoSinCodificar):
-    base64_cadena_bytes = base64.b64encode(textoSinCodificar.encode('ascii'))
-    texto_base64 = base64_cadena_bytes.decode('ascii')
-    return texto_base64
+
+def codificar(nombreArchivo):
+    #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
+    dir_path = os.path.dirname(os.path.realpath(__file__)) 
+    # Lectura de archivo de puntajes sin codificar
+    archivoPuntajes=open(dir_path+"/"+nombreArchivo, "r")
+    texto=archivoPuntajes.read()
+    archivoPuntajes.close()
+    # Codificacion
+    base64_cadena_bytes = base64.b64encode(texto.encode('ascii'))
+    #funcion
+    base64_message = base64_cadena_bytes.decode('ascii')
+    return base64_message
 
 def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando en primera instancia, la codificacion ascii para luego decodificar correctamente la informacion desde base64
     try:
@@ -84,3 +92,6 @@ def generarXlsx(rutss,puntajess):
             if (i==27):
                 df.to_excel(writer, "Ing. Ind.", index=False)
         writer.save()
+
+print (wsdl.service.cadena("hola ","mundo"))
+solicitud = wsdl.service.programaPrincipal("text/csv","puntajes.csv",codificar("puntajes.csv"))
