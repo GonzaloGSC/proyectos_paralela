@@ -8,14 +8,14 @@ print (wsdl.service.sumar(2, 5))
 # cad = wsdl.service.verdaderofalso(2,3)
 # print (cad)
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-archivo = open(dir_path+"/"+"doc.csv","r")
-narchivo = archivo.read()
+# dir_path = os.path.dirname(os.path.realpath(__file__))
+# archivo = open(dir_path+"/"+"doc.csv","r")
+# narchivo = archivo.read()
 
-hola= base64.encodestring(narchivo.encode('ascii'))
+# hola= base64.encodestring(narchivo.encode('ascii'))
 
 #print (hola)
-documento = wsdl.service.webarchivo(hola)
+#documento = wsdl.service.webarchivo(hola)
 # print (documento)
 
 #from zeep import Client
