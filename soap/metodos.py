@@ -106,7 +106,7 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
 class servicios(ServiceBase):
     ######################################################################## Programa principal  ########################################################################
 
-    @rpc(Unicode, Unicode, Unicode, _return = Iterable(Unicode))
+    @rpc(Unicode, Unicode, Unicode, _returns = Iterable(Unicode))
     def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#FUNCION QUE DEBE ESTAR DENTRO DE LA CLASE SERVIDOR O SERVICIO
 
         ########### DECLARACION DE VARIABLES

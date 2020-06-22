@@ -2,6 +2,14 @@ from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
 
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
+
+from mimetypes import guess_type, guess_extension # Utilizado para trabajar el MIME de archivos, comprobacion.
+import re # Utilizado para .search(), busqueda de extencion en archivos
+import base64 # Utilizado para trabajar con la codificación y decodificación del archivo
+import csv # Utilizado para revisar el archivo decodificado, para detectar separadores y demas
+import platform # Utilizado para detectar el SO
+import os # Utilizado para eliminar archivo temporal de revisión
+import pandas #Libreria open source, utilizada para crear xlsx
 import fun
 
 application = Application([fun.servicios], 'spyne.servicio.soap',

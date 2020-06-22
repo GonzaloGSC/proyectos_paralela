@@ -11,7 +11,12 @@ archivoPuntajes.close()
 
 # Codificacion
 base64_cadena_bytes = base64.b64encode(texto.encode('ascii'))
+
+#funcion
+
+
 base64_message = base64_cadena_bytes.decode('ascii')
+
 
 # Escritura de datos codificados
 #salida=open(dir_path+"/"+"puntajesEncode.txt", "w")
