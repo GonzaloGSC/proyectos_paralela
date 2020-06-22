@@ -5,7 +5,7 @@ import os
 dir_path = os.path.dirname(os.path.realpath(__file__)) 
 
 # Lectura de archivo de puntajes sin codificar
-archivoPuntajes=open(dir_path+"/"+"puntajesbloq.csv", "r")
+archivoPuntajes=open(dir_path+"/"+"prueba.txt", "r")
 texto=archivoPuntajes.read()
 archivoPuntajes.close()
 
