@@ -106,7 +106,7 @@ def revisarContenidoBase64(ArchivoCodificado): # Revisa el contenido del archivo
 ######################################################################## Programa principal  ########################################################################
 
 class servicios(ServiceBase):
-    @rpc(Unicode, Unicode, _returns = Unicode)
+    @rpc(Unicode, _returns = Unicode)
     def cadena(ctx, cad1, cad2):
         cado = cad1 + cad2
         return cado
