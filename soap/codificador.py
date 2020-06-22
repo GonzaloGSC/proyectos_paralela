@@ -14,6 +14,6 @@ base64_cadena_bytes = base64.b64encode(texto.encode('ascii'))
 base64_message = base64_cadena_bytes.decode('ascii')
 
 # Escritura de datos codificados
-salida=open(dir_path+"/"+"puntajesEncode.txt", "w")
-a=salida.write(base64_message)
-salida.close()
+#salida=open(dir_path+"/"+"puntajesEncode.txt", "w")
+#a=salida.write(base64_message)
+#salida.close()
