@@ -8,9 +8,11 @@ import csv # Utilizado para revisar el archivo decodificado, para detectar separ
 import platform # Utilizado para detectar el SO
 import os # Utilizado para eliminar archivo temporal de revisión
 import pandas #Libreria open source, utilizada para crear xlsx
+import xlrd
 from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
+
 ######################################################################## SECTOR DE FUNCIONES ########################################################################
 
 
@@ -23,7 +25,6 @@ def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando
     try:
         cadena_bytes = base64.b64decode(textoCodificado.encode('ascii'))
         textoDecode = cadena_bytes.decode('ascii')
-        textoDecode = textoDecode.split("\n") # Separa el string en los saltos de linea
         return textoDecode
     except:
         print("Error: Falla inesperada en decodificación, revise la codificacion base64 del archivo, esta puede haber sido cortada.")
@@ -39,33 +40,10 @@ def revisarMime(nombreDelArchivo): # Revisa el mime del nombre de archivo ingres
         return resultado[0]
 
 def revisarContenidoBase64(TextoCodificado): # Revisa el contenido del archivo para detectar si es efectivamente un CSV o no.
-    # dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
-    # archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
-    # mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
-    
-    mensaje = TextoCodificado
-    salida = open("temporalRevisionIngreso.txt", "w")
-    a = salida.write(str(mensaje))
-    salida.close()
-    archivoTemporal = open("temporalRevisionIngreso.txt","r")
     contador = 0
     try:
-        revision = csv.Sniffer().sniff(archivoTemporal.read(),";") #Realiza varios testeos sobre el archivo (separadores, delimitadores, etc.) archivo.read(1024) Fuente: https://docs.python.org/3/library/csv.html
-        # mensaje = archivo64.read()
-        mensaje = decodificar(mensaje)
-        # archivo64.close()
-        archivoTemporal.close()
-
-        if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
-            try:
-                os.unlink("temporalRevisionIngreso.txt") # Eliminacion del archivo temporal
-            except OSError as e:
-                print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
-        elif (platform.system()=="Windows"):
-            try:
-                os.remove("temporalRevisionIngreso.txt") # Eliminacion del archivo temporal
-            except OSError as e:
-                print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
+        revision = csv.Sniffer().sniff(decodificar(TextoCodificado),";") #Realiza varios testeos sobre el archivo (separadores, delimitadores, etc.) archivo.read(1024) Fuente: https://docs.python.org/3/library/csv.html
+        mensaje = decodificar(TextoCodificado).split("\n")
         for linea in mensaje: #Revision de cada linea ingresada
             for caracter in linea: #Revision de cada caracter ingresado
                 contador = contador + 1
@@ -85,28 +63,80 @@ def revisarContenidoBase64(TextoCodificado): # Revisa el contenido del archivo p
         print("El archivo es correcto.") # Si finalmente el archivo ingresado pasa todos los filtros, es aceptado.
         return 1 #Aprovechando la instancia, devuelve la informacion ya decodificada
     except csv.Error:
-        # archivo64.close()
-        archivoTemporal.close()
-        if (platform.system()=="Linux"): # En base al SO elimina el archivo creado para revision
-            try:
-                os.unlink("temporalRevisionIngreso.txt")
-            except OSError as e:
-                print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
-        elif (platform.system()=="Windows"):
-            try:
-                os.remove("temporalRevisionIngreso.txt")
-            except OSError as e:
-                print("Error: %s : %s" % ("temporalRevisionIngreso.txt", e.strerror))
         print("Error: Separadores y delimitadores no corresponden. El archivo no corresponde al formato admitido, por favor, reintentar.") # Excepcion preparada para la deteccion de otro separador en el csv o un error en la revision de este.
         return 0
+
+def generarXlsx(rutss,puntajess,nombreXlsx):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    writer = pandas.ExcelWriter(dir_path+"/"+nombreXlsx) # pylint: disable=abstract-class-instantiated
+    for i in range(0,28):
+        df = pandas.DataFrame({
+            "Nº": [int(j)+1 for j in range(len(puntajess[i]))],
+            "RUT Matriculado": rutss[i],
+            "Puntaje": puntajess[i]})
+        df = df[["Nº", "RUT Matriculado", "Puntaje"]]
+        if (i==0):
+            df.to_excel(writer, "Administración Pública", index=False)
+        if (i==1):
+            df.to_excel(writer, "Bibliotecología y Documentación", index=False)
+        if (i==2):
+            df.to_excel(writer, "Contador Público y Auditor", index=False)
+        if (i==3):
+            df.to_excel(writer, "Ing. Comercial", index=False)
+        if (i==4):
+            df.to_excel(writer, "Ing. en Adm. Agroindustrial", index=False)
+        if (i==5):
+            df.to_excel(writer, "Ing. en Comercio Inter.", index=False)
+        if (i==6):
+            df.to_excel(writer, "Ing. en Gestión Turística", index=False)
+        if (i==7):
+            df.to_excel(writer, "Arquitectura", index=False)
+        if (i==8):
+            df.to_excel(writer, "Ing. Civil en Obras Civiles", index=False)
+        if (i==9):
+            df.to_excel(writer, "Ing. en Construcción", index=False)
+        if (i==10):
+            df.to_excel(writer, "Ing. Civil en Prev. de R.", index=False)
+        if (i==11):
+            df.to_excel(writer, "Ing.en Biotecnología", index=False)
+        if (i==12):
+            df.to_excel(writer, "Ing. en Ind. Alimentaria", index=False)
+        if (i==13):
+            df.to_excel(writer, "Ing. en Química", index=False)
+        if (i==14):
+            df.to_excel(writer, "Química Ind.", index=False)
+        if (i==15):
+            df.to_excel(writer, "Diseño en Comunicación Visual", index=False)
+        if (i==16):
+            df.to_excel(writer, "Diseño Ind.", index=False)
+        if (i==17):
+            df.to_excel(writer, "Trabajo Social", index=False)
+        if (i==18):
+            df.to_excel(writer, "Bach. en Ciencias de la Ing.", index=False)
+        if (i==19):
+            df.to_excel(writer, "Dibujante Proyectista", index=False)
+        if (i==20):
+            df.to_excel(writer, "Ing. Civil en Comp.", index=False)
+        if (i==21):
+            df.to_excel(writer, "Ing. Civil Ind.", index=False)
+        if (i==22):
+            df.to_excel(writer, "Ing. Civil en Ciencia de Datos", index=False)
+        if (i==23):
+            df.to_excel(writer, "Ing. Civil Electrónica", index=False)
+        if (i==24):
+            df.to_excel(writer, "Ing. Civil en Mecánica", index=False)
+        if (i==25):
+            df.to_excel(writer, "Ing. en Geomensura", index=False)
+        if (i==26):
+            df.to_excel(writer, "Ing. en Informática", index=False)
+        if (i==27):
+            df.to_excel(writer, "Ing. Ind.", index=False)
+    writer.save()
 
 ######################################################################## Programa principal  ########################################################################
 
 class servicios(ServiceBase):
-    @rpc(Unicode, Unicode, _returns = Unicode)
-    def cadena(ctx, cad1, cad2):
-        cado = cad1 + cad2
-        return cado
+
     @rpc(Unicode, Unicode, Unicode, _returns = Iterable(Unicode))
     def programaPrincipal(ctx,mime,nombreDelArchivo,datosBase64):#Funcion de consumo
 
@@ -132,20 +162,15 @@ class servicios(ServiceBase):
 
         ########### VALIDACION DE DATOS INGRESADOS
         print("Validando datos ingresados...")
-        arregloDePuntajesPsu = revisarContenidoBase64(datosBase64)
-
+ 
         if (not (revisarContenidoBase64(datosBase64)) or revisarMime(nombreDelArchivo)!="text/csv" or mime!="text/csv"):# Comprueba datos de ingreso (nombre del archivo, mime, e informacion codifiada en base64)
             if (mime!="text/csv"):
                 print("Recepcion de MIME incorrecto, usar text/csv.")
-            yield "Finalizando ejecucion..."
-        arregloDePuntajesPsu = decodificar(datosBase64)
+            return "Finalizando ejecucion..."
+
         ########### OPERACION SOBRE DATOS
 
-        # dir_path = os.path.dirname(os.path.realpath(__file__)) #Detecta la posicion real del archivo soap.py, para evitar errores de busqueda de archivos en el mismo directorio.
-        # archivo64 = open(dir_path+"/"+datosBase64,"r")
-        mensaje = datosBase64
-        # archivo64.close()
-        arregloDePuntajesPsu = decodificar(mensaje)
+        arregloDePuntajesPsu = decodificar(datosBase64).split("\n") # Separa el string en los saltos de linea
         contadorPostulante = 0
         print("Obteniendo ponderaciones por estudiante a cada carrera...")
         for datosPostulante in arregloDePuntajesPsu:
@@ -215,6 +240,7 @@ class servicios(ServiceBase):
                 a=0
             else:
                 a=a+1 # Pasa al siguiente postulante para revision
+
         # Se repite todo el proceso anterior por cada carrera....
 
         print("Carrera: Diseño en Comunicación Visual...")
@@ -658,20 +684,25 @@ class servicios(ServiceBase):
                 a=0
             else:
                 a=a+1
-        yield "hola"
+        
+        
+
+        ########### RESPUESTA DEL SERVIDOR AL CLIENTE
+
+        yield "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        yield "Matriculados Utem.xlsx"
+        # contenido64 = codificar(str(matriculadosPorCarreraRuts)) + codificar("|") + codificar(str(matriculadosPorCarreraPuntajes))
+        generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes,"Matriculados UTEM.xlsx")
+        contenidoArchivoCreado=open("Matriculados UTEM.xlsx", 'rb').read()  
+        print(contenidoArchivoCreado)
+        contenidoArchivoCreado64=base64.b64encode(contenidoArchivoCreado)#.decode('UTF-8')
+        os.remove("Matriculados UTEM.xlsx") 
+        yield contenidoArchivoCreado64
         ########### CREACION DE XLSX (SOLO ESTARA EN EL CLIENTE... por ahora..)
  
         # print("Generando xlsx...")
         # generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes) # FUNCION QUE DEBE IR SOLO EN EL CLIENTE (por ahora...)
 
-        # ########### RESPUESTA AL CLIENTE:
-        # mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        # nombrexlsx = "Matriculados Utem.xlsx"
-        # contenido64 = codificar(str(matriculadosPorCarreraRuts)) + codificar("|") + codificar(str(matriculadosPorCarreraPuntajes))
-        # print("\nmime = "+mime+"\nnombrexlsx = "+ nombrexlsx+"\nContenido = "+contenido64)
-
-
-#programaPrincipal("ctx","text/csv","puntajes.csv","puntajesEncode.txt")
 
 
 
@@ -680,7 +711,6 @@ application = Application([servicios], 'spyne.servicio.soap',
                           out_protocol=Soap11())
 
 wsgi_application = WsgiApplication(application)
-
 
 if __name__ == '__main__':
     import logging
