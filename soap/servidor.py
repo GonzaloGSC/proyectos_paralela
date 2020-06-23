@@ -8,7 +8,7 @@ import csv # Utilizado para revisar el archivo decodificado, para detectar separ
 import platform # Utilizado para detectar el SO
 import os # Utilizado para eliminar archivo temporal de revisión
 import pandas #Libreria open source, utilizada para crear xlsx
-import xlrd
+# import xlrd
 from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
@@ -70,10 +70,20 @@ def generarXlsx(rutss,puntajess,nombreXlsx):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     writer = pandas.ExcelWriter(dir_path+"/"+nombreXlsx) # pylint: disable=abstract-class-instantiated
     for i in range(0,28):
+        ordenarEsto = []
+        for j in range(len(puntajess[i])):
+            ordenarEsto.append([rutss[i][j],puntajess[i][j]])
+        ordenarEsto.sort(key=lambda x: x[1], reverse=1)
+        r=[]
+        p=[]
+        for k in range(len(ordenarEsto)):
+            r.append(ordenarEsto[k][0])
+            p.append(ordenarEsto[k][1])
+
         df = pandas.DataFrame({
             "Nº": [int(j)+1 for j in range(len(puntajess[i]))],
-            "RUT Matriculado": rutss[i],
-            "Puntaje": puntajess[i]})
+            "RUT Matriculado": r,
+            "Puntaje": p})
         df = df[["Nº", "RUT Matriculado", "Puntaje"]]
         if (i==0):
             df.to_excel(writer, "Administración Pública", index=False)
@@ -685,26 +695,19 @@ class servicios(ServiceBase):
             else:
                 a=a+1
         
-        
-
         ########### RESPUESTA DEL SERVIDOR AL CLIENTE
 
         yield "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         yield "Matriculados Utem.xlsx"
-        # contenido64 = codificar(str(matriculadosPorCarreraRuts)) + codificar("|") + codificar(str(matriculadosPorCarreraPuntajes))
         generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes,"Matriculados UTEM.xlsx")
-        contenidoArchivoCreado=open("Matriculados UTEM.xlsx", 'rb').read()  
-        print(contenidoArchivoCreado)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        contenidoArchivoCreado=open(dir_path+"/"+"Matriculados UTEM.xlsx", 'rb').read()  
+        # print(contenidoArchivoCreado)
         contenidoArchivoCreado64=base64.b64encode(contenidoArchivoCreado)#.decode('UTF-8')
-        os.remove("Matriculados UTEM.xlsx") 
+        os.remove(dir_path+"/"+"Matriculados UTEM.xlsx") 
         yield contenidoArchivoCreado64
-        ########### CREACION DE XLSX (SOLO ESTARA EN EL CLIENTE... por ahora..)
- 
-        # print("Generando xlsx...")
-        # generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes) # FUNCION QUE DEBE IR SOLO EN EL CLIENTE (por ahora...)
 
-
-
+######################################################################## Programa principal, DECLARACION DE APLICACION  ########################################################################
 
 application = Application([servicios], 'spyne.servicio.soap',
                           in_protocol=Soap11(validator='lxml'),
@@ -714,7 +717,6 @@ wsgi_application = WsgiApplication(application)
 
 if __name__ == '__main__':
     import logging
-
     from wsgiref.simple_server import make_server
 
     logging.basicConfig(level=logging.DEBUG)
