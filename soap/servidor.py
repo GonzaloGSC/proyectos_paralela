@@ -7,7 +7,7 @@ import base64 # Utilizado para trabajar con la codificación y decodificación d
 import csv # Utilizado para revisar el archivo decodificado, para detectar separadores y demas
 import platform # Utilizado para detectar el SO
 import os # Utilizado para eliminar archivo temporal de revisión
-import pandas #Libreria open source, utilizada para crear xlsx
+import pandas as pd #Libreria open source, utilizada para crear xlsx
 import xlrd
 from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
 from spyne.protocol.soap import Soap11
@@ -693,7 +693,7 @@ class servicios(ServiceBase):
         yield "Matriculados Utem.xlsx"
         # contenido64 = codificar(str(matriculadosPorCarreraRuts)) + codificar("|") + codificar(str(matriculadosPorCarreraPuntajes))
         generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes,"Matriculados UTEM.xlsx")
-        contenidoArchivoCreado=open("Matriculados UTEM.xlsx", 'rb').read()  
+        contenidoArchivoCreado=pd.read_excel("Matriculados UTEM.xlsx") 
         print(contenidoArchivoCreado)
         contenidoArchivoCreado64=base64.b64encode(contenidoArchivoCreado)#.decode('UTF-8')
         os.remove("Matriculados UTEM.xlsx") 
