@@ -7,8 +7,8 @@ import base64 # Utilizado para trabajar con la codificación y decodificación d
 import csv # Utilizado para revisar el archivo decodificado, para detectar separadores y demas
 import platform # Utilizado para detectar el SO
 import os # Utilizado para eliminar archivo temporal de revisión
-import pandas as pd #Libreria open source, utilizada para crear xlsx
-import xlrd
+import pandas #Libreria open source, utilizada para crear xlsx
+# import xlrd
 from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
@@ -70,10 +70,20 @@ def generarXlsx(rutss,puntajess,nombreXlsx):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     writer = pandas.ExcelWriter(dir_path+"/"+nombreXlsx) # pylint: disable=abstract-class-instantiated
     for i in range(0,28):
+        ordenarEsto = []
+        for j in range(len(puntajess[i])):
+            ordenarEsto.append([rutss[i][j],puntajess[i][j]])
+        ordenarEsto.sort(key=lambda x: x[1], reverse=1)
+        r=[]
+        p=[]
+        for k in range(len(ordenarEsto)):
+            r.append(ordenarEsto[k][0])
+            p.append(ordenarEsto[k][1])
+
         df = pandas.DataFrame({
             "Nº": [int(j)+1 for j in range(len(puntajess[i]))],
-            "RUT Matriculado": rutss[i],
-            "Puntaje": puntajess[i]})
+            "RUT Matriculado": r,
+            "Puntaje": p})
         df = df[["Nº", "RUT Matriculado", "Puntaje"]]
         if (i==0):
             df.to_excel(writer, "Administración Pública", index=False)
@@ -235,11 +245,14 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[9].append(lista[a][6]) # Se guarda el puntaje del matriculado
                 lista[a][0] = 0 # Se cambia el rut por 0, asi se detectan los ya matriculados
                 b=b+1 # Nuevo matriculado
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<100): # Si se revisaron todos los postulantes, y no se llenan los cupos, activa proceso de relleno de mejores postulantes
                 c=1
                 a=0
             else:
                 a=a+1 # Pasa al siguiente postulante para revision
+            
 
         # Se repite todo el proceso anterior por cada carrera....
 
@@ -254,6 +267,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[15].append(lista[a][10])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<100):
                 c=1
                 a=0
@@ -271,6 +286,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[17].append(lista[a][11])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<95):
                 c=1
                 a=0
@@ -288,11 +305,14 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[26].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<105):
                 c=1
                 a=0
             else:
                 a=a+1
+            
         
         print("Carrera: Ingeniería Civil en Mecánica...")
         lista.sort(key=lambda x: x[12], reverse=1) 
@@ -305,6 +325,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[24].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<90):
                 c=1
                 a=0
@@ -322,6 +344,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[19].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<25):
                 c=1
                 a=0
@@ -339,6 +363,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[12].append(lista[a][8])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<30):
                 c=1
                 a=0
@@ -356,6 +382,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[11].append(lista[a][8])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<60):
                 c=1
                 a=0
@@ -373,6 +401,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[1].append(lista[a][2])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<35):
                 c=1
                 a=0
@@ -390,6 +420,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[20].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<130):
                 c=1
                 a=0
@@ -407,6 +439,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[22].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<60):
                 c=1
                 a=0
@@ -424,6 +458,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[21].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<200):
                 c=1
                 a=0
@@ -441,6 +477,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[6].append(lista[a][4])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<25):
                 c=1
                 a=0
@@ -458,6 +496,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[23].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<80):
                 c=1
                 a=0
@@ -475,6 +515,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[3].append(lista[a][4])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<125):
                 c=1
                 a=0
@@ -492,6 +534,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[16].append(lista[a][10])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<65):
                 c=1
                 a=0
@@ -509,6 +553,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[7].append(lista[a][5])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<100):
                 c=1
                 a=0
@@ -526,6 +572,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[5].append(lista[a][4])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<90):
                 c=1
                 a=0
@@ -543,6 +591,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[2].append(lista[a][3])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<80):
                 c=1
                 a=0
@@ -560,6 +610,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[4].append(lista[a][4])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<30):
                 c=1
                 a=0
@@ -577,6 +629,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[0].append(lista[a][1])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<35):
                 c=1
                 a=0
@@ -594,6 +648,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[8].append(lista[a][6])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<100):
                 c=1
                 a=0
@@ -611,6 +667,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[10].append(lista[a][7])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<30):
                 c=1
                 a=0
@@ -628,6 +686,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[25].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<60):
                 c=1
                 a=0
@@ -645,7 +705,28 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[13].append(lista[a][9])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<80):
+                c=1
+                a=0
+            else:
+                a=a+1
+        
+        print("Carrera: Quimica Industrial...")
+        lista.sort(key=lambda x: x[9], reverse=1) 
+        b=0
+        a=0
+        c=0
+        while(b<60):
+            if ((lista[a][9]>=max(lista[a][1:12]) and lista[a][0]!=0) or (c and lista[a][0]!=0)):
+                matriculadosPorCarreraRuts[14].append(lista[a][0])
+                matriculadosPorCarreraPuntajes[14].append(lista[a][9])
+                lista[a][0] = 0
+                b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
+            if (a==len(lista)-1 and b<60):
                 c=1
                 a=0
             else:
@@ -662,6 +743,8 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[18].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<25):
                 c=1
                 a=0
@@ -679,32 +762,27 @@ class servicios(ServiceBase):
                 matriculadosPorCarreraPuntajes[27].append(lista[a][12])
                 lista[a][0] = 0
                 b=b+1
+            if(a==len(lista)-1 and c==1):
+                break
             if (a==len(lista)-1 and b<60):
                 c=1
                 a=0
             else:
                 a=a+1
         
-        
-
         ########### RESPUESTA DEL SERVIDOR AL CLIENTE
 
         yield "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         yield "Matriculados Utem.xlsx"
-        # contenido64 = codificar(str(matriculadosPorCarreraRuts)) + codificar("|") + codificar(str(matriculadosPorCarreraPuntajes))
         generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes,"Matriculados UTEM.xlsx")
-        contenidoArchivoCreado=pd.read_excel("Matriculados UTEM.xlsx") 
-        print(contenidoArchivoCreado)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        contenidoArchivoCreado=open(dir_path+"/"+"Matriculados UTEM.xlsx", 'rb').read()  
+        # print(contenidoArchivoCreado)
         contenidoArchivoCreado64=base64.b64encode(contenidoArchivoCreado)#.decode('UTF-8')
-        os.remove("Matriculados UTEM.xlsx") 
+        os.remove(dir_path+"/"+"Matriculados UTEM.xlsx") 
         yield contenidoArchivoCreado64
-        ########### CREACION DE XLSX (SOLO ESTARA EN EL CLIENTE... por ahora..)
- 
-        # print("Generando xlsx...")
-        # generarXlsx(matriculadosPorCarreraRuts,matriculadosPorCarreraPuntajes) # FUNCION QUE DEBE IR SOLO EN EL CLIENTE (por ahora...)
 
-
-
+######################################################################## Programa principal, DECLARACION DE APLICACION  ########################################################################
 
 application = Application([servicios], 'spyne.servicio.soap',
                           in_protocol=Soap11(validator='lxml'),
@@ -714,7 +792,6 @@ wsgi_application = WsgiApplication(application)
 
 if __name__ == '__main__':
     import logging
-
     from wsgiref.simple_server import make_server
 
     logging.basicConfig(level=logging.DEBUG)

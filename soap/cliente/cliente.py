@@ -1,7 +1,6 @@
 from suds.client import Client
-import base64
-import os
-import pandas
+import base64, os, io
+
 wsdl = Client('http://localhost:8000/?wsdl')
 
 
@@ -17,20 +16,17 @@ def codificar(nombreArchivo):
     base64_message = base64_cadena_bytes.decode('ascii')
     return base64_message
 
-def decodificar(textoCodificado): # Decodifica el archivo de ingreso, utilizando en primera instancia, la codificacion ascii para luego decodificar correctamente la informacion desde base64
-    try:
-        cadena_bytes = base64.b64decode(textoCodificado.encode('ascii'))
-        textoDecode = cadena_bytes.decode('ascii')
-        textoDecode = textoDecode.split("\n") # Separa el string en los saltos de linea
-        return textoDecode
-    except:
-        print("Error: Falla inesperada en decodificación de respuesta del servidor, revise la codificacion base64 del archivo, esta puede haber sido cortada.")
+######################SOLICITUD Y RESPUESTA DE SERVIDOR
 
-
-
-# Envio de archivo en solicitud de procesamiento al servidor
 respuesta = wsdl.service.programaPrincipal("text/csv","puntajes.csv",codificar("puntajes.csv"))
-
-print(respuesta[0][2])
-arregloDatos = base64.b64decode(respuesta[0][2])
-print(arregloDatos)
+if (respuesta[0][0]=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    arregloDatos = base64.b64decode(respuesta[0][2])
+    toread = io.BytesIO()
+    toread.write(arregloDatos)  # pass your `decrypted` string as the argument here
+    toread.seek(0)  # reset the pointer
+    with open(dir_path+"/"+respuesta[0][1], "wb") as f:
+        f.write(toread.read())
+    f.close()
+else:
+    print("Error: Falla en MIME... ")
