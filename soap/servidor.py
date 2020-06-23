@@ -43,7 +43,7 @@ def revisarContenidoBase64(TextoCodificado): # Revisa el contenido del archivo p
     # archivo64 = open(dir_path+"/"+ArchivoCodificado,"r")
     # mensaje = archivo64.read(100012)# Tamaño de lectura en bytes para revisar, recomendado = 100012
     
-    mensaje = ArchivoCodificado
+    mensaje = TextoCodificado
     salida = open("temporalRevisionIngreso.txt", "w")
     a = salida.write(str(mensaje))
     salida.close()
@@ -103,7 +103,7 @@ def revisarContenidoBase64(TextoCodificado): # Revisa el contenido del archivo p
 ######################################################################## Programa principal  ########################################################################
 
 class servicios(ServiceBase):
-    @rpc(Unicode, _returns = Unicode)
+    @rpc(Unicode, Unicode, _returns = Unicode)
     def cadena(ctx, cad1, cad2):
         cado = cad1 + cad2
         return cado

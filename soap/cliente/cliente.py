@@ -93,5 +93,5 @@ def generarXlsx(rutss,puntajess):
                 df.to_excel(writer, "Ing. Ind.", index=False)
         writer.save()
 
-print (wsdl.service.cadena("hola ","mundo"))
+# print (wsdl.service.cadena("hola ","mundo"))
 solicitud = wsdl.service.programaPrincipal("text/csv","puntajes.csv",codificar("puntajes.csv"))
