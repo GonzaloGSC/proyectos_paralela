@@ -800,6 +800,6 @@ if __name__ == '__main__':
     #El documento wsdl estara alojado en http://localhost:8000/?wsdl
     logging.info("listening to http://127.0.0.1:8000")
     logging.info("wsdl is at: http://localhost:8000/?wsdl")
-    wsgi_app = WsgiApplication(application, chunked = True, max_content_length = 2097152*100, block_length = 1024*1024*500)
+    wsgi_app = WsgiApplication(application, chunked = True, max_content_length = 2097152*1000, block_length = 1024*1024*5000)
     server = make_server('127.0.0.1', 8000, wsgi_app)
     server.serve_forever()
