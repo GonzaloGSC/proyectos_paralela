@@ -1,7 +1,7 @@
 from suds.client import Client
 import base64, os, io
 
-wsdl = Client('http://localhost:8000/?wsdl')
+wsdl = Client('http://localhost:8000/?wsdl', timeout = 1200)
 
 
 def codificar(nombreArchivo):
