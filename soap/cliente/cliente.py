@@ -1,6 +1,6 @@
 from suds.client import Client
 import base64, os, io
-
+#hola
 wsdl = Client('http://localhost:8000/?wsdl')
 
 
