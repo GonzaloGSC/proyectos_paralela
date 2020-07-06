@@ -1,0 +1,26 @@
+#################################################REQUISITOS#################################################
+https://www.youtube.com/watch?v=WbAqnp-zqPU
+#Instalacion de librerias y otros:
+
+pip install virtualenv
+pip install django # segun tutorial, se debe instalar con el entorno virtual activo
+
+#################################################UTILES#################################################
+
+#Crear entorno:
+virtualenv -p python3 "nombreDelEntorno"
+
+#Activar entorno:
+source "pathEntorno"/bin/activate
+source "pathEntorno"/Scripts/activate
+
+#Crear proyecto django:
+django-admin startproject proyectorest # Con entorno activo
+
+#Ejecutar servidor en entorno:
+python manage.py runserver
+
+#Crear aplicacion django:
+django-admin startapp "nombreapp"
+
+#
