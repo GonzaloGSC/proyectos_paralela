@@ -1,6 +1,6 @@
 from django.shortcuts import render
 #clases para vistas
-from rest_framework import viewsets, views, filters
+from rest_framework import viewsets, views, filters, generics
 #modelos BBDD
 from .models import postulante, autores
 #serializador transforma el formato
@@ -33,10 +33,28 @@ class buscarcodigo(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        carrera = postulante.objects.filter(Codigo = '21041')
+        cod = request.GET['Codigo']
+        print(cod)
+        carrera = postulante.objects.filter(Codigo = cod)
         seria = postulanteSerializer(carrera, many=True)
         return Response(seria.data)
     #    carrera = postulante.objects.get(Codigo = 21041)
     #    print(carrera)
     #    return Response("hola")
     
+class buscarcarrera(views.APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        consulta = request.GET['Nombre']
+        print(consulta)
+        resultado = postulante.objects.filter(Nombre__icontains = consulta)
+        serializador = postulanteSerializer(resultado, many=True)
+        return Response(serializador.data)
+
+class CarrerasListView(generics.ListAPIView):
+    queryset = postulante.objects.all()
+    serializer_class = postulanteSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['Nombre','Codigo']
