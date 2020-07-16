@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         getpuntajes(){
-            const path ='http://127.0.0.1:8000/api/v0.01/postulante/'
+            const path ='http://127.0.0.1:8000/api/v0.01/postulante/?search=ingeniería'
             axios.get(path).then((responce) => {
                 this.carreras = responce.data
             })

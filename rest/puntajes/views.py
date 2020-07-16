@@ -14,6 +14,7 @@ from rest_framework.response import Response
 # Create your views here.
 
 class postulanteViewSet(viewsets.ModelViewSet):
+    
     queryset = postulante.objects.all()
     serializer_class = postulanteSerializer
     filter_backends = [filters.SearchFilter]
@@ -24,8 +25,7 @@ class buscarcodigo(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        hola=type(request)
+    def post(self, request):
         print (hola)
         #carrera = postulante.objects.filter(Nombre=request)
         #seriealizer = postulanteSerializer(carrera)
