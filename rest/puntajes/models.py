@@ -16,3 +16,7 @@ class postulante(models.Model):
     Vacantes = models.IntegerField()
     PrimerMatriculado = models.DecimalField(max_digits = 5, decimal_places = 2)
     UltimoMatriculado = models.DecimalField(max_digits = 5, decimal_places = 2)
+
+
+class autores(models.Model):
+    integrante = models.CharField(max_length = 50)
