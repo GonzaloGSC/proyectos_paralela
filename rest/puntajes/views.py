@@ -12,9 +12,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 # Imports de las weas magicas
-from django_filters.rest_framework import DjangoFilterBackend # imports de filtros para realizar busquedas.
-from rest_framework.filters import OrderingFilter, SearchFilter # imports para ordenar la busqueda.
-from rest_framework import generics #import para utilizar los tipos de vistas 
+# from django_filters.rest_framework import DjangoFilterBackend # imports de filtros para realizar busquedas.
+# from rest_framework.filters import OrderingFilter, SearchFilter # imports para ordenar la busqueda.
+# from rest_framework import generics #import para utilizar los tipos de vistas 
 import json
 class postulanteViewSet(viewsets.ModelViewSet):
     
@@ -23,19 +23,21 @@ class postulanteViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['Nombre','Codigo']
 
-class autoresViewSet(viewsets.ModelViewSet):
+class autoresF(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = autores.objects.all()
-    serializer_class = autoresSerializer
-    
+
+    def get(self, request):
+        queryset = autores.objects.all()
+        serializer_class = autoresSerializer(queryset, many=True)
+        return Response(serializer_class.data)
 
 class buscarcodigo(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        cod = request.GET['Codigo']
+        cod = request.GET.get('Codigo')
         print(cod)
         carrera = postulante.objects.filter(Codigo = cod)
         seria = postulanteSerializer(carrera, many=True)

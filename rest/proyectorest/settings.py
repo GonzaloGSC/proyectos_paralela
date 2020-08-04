@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'puntajes',
     'rest_framework',
-    
+    'corsheaders',
     'rest_framework.authtoken',
     'rest_auth',
     'rest_auth.registration',
