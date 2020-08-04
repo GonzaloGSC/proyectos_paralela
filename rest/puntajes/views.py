@@ -111,7 +111,7 @@ class postular(views.APIView):
         # data = json.loads(request.POST['nem'])
         # print(data)
 
-        
+        #trasero
         return Response(data)
     
 
