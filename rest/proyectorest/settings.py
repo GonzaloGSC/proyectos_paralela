@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'puntajes',
     'rest_framework',
-    'corsheaders',
+    
     'rest_framework.authtoken',
     'rest_auth',
     'rest_auth.registration',
@@ -136,7 +136,7 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
   'DEFAULT_PERMISSION_CLASSES': [                     
-    'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    'rest_framework.permissions.AllowAny',
   ],
 }
 

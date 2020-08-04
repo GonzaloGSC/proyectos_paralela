@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/v0.01/codigo',views.buscarcodigo.as_view()),
     path('api/v0.01/search',views.CarrerasListView.as_view()),
     path('api/v0.01/carrera',views.buscarcarrera.as_view()),
+    path('api/v0.01/postular',views.postular.as_view()),
     path('api/v1/auth/',
         include('rest_auth.urls')),
     path('api/v1/auth/registration/', 
