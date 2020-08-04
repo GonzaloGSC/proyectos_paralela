@@ -4,7 +4,7 @@ from rest_framework import viewsets, views, filters, generics
 #modelos BBDD
 from .models import postulante, autores
 #serializador transforma el formato
-from .serializer import postulanteSerializer, autoresSerializer
+from .serializer import postulanteSerializer, autoresSerializer,codigoSerializer
 #mensaje de error
 from django.shortcuts import get_object_or_404
 #autentificacion por token
@@ -17,8 +17,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter # imports para o
 from rest_framework import generics #import para utilizar los tipos de vistas 
 import json
 class postulanteViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    
     queryset = postulante.objects.all()
     serializer_class = postulanteSerializer
     filter_backends = [filters.SearchFilter]
@@ -46,11 +45,11 @@ class buscarcodigo(views.APIView):
     #    return Response("hola")
     
 class buscarcarrera(views.APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        consulta = request.GET['Nombre']
+        consulta = request.GET.get('Nombre')
         print(consulta)
         resultado = postulante.objects.filter(Nombre__icontains = consulta)
         serializador = postulanteSerializer(resultado, many=True)
