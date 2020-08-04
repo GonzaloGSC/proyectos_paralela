@@ -16,7 +16,7 @@ import json
 from django.http import JsonResponse #import para las respuestas del servicio
 
 
-class autores(views.APIView):
+class autoresF(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request):
