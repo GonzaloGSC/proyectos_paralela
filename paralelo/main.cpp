@@ -128,7 +128,14 @@ int main(int argc, char** argv ){
         ///////////////////////PROCESAMIENTO DE LAS IMAGENES O TROZOS DE ESTAS EN BASE A LA OPCION INGRESADA
         if(opcion=="1")
         {
-            GaussianBlur(trozoImagen, resultadoParcial, Size(7,7), 0,0,1); //Funcion maravillosa que realiza el difuminado de la imagen o el trozo de esta por el metodo de gauss.
+            int factorh = round((7*trozoImagen.rows)/600);//Factor de difuminado de la imagen en base al tamaño vertical de esta.
+            int factorw = round((7*trozoImagen.cols)/600);//Factor de difuminado de la imagen en base al tamaño horizontal de esta.
+            int factor = round((factorh+factorw)/2)+1; // Calculo del factor final para el kernel de difuminado.
+            if(factor % 2 == 0)// Impide que el factor sea par, con el fin de evitar errores en la funcion GaussianBlur
+            {
+                factor = factor+1;
+            }
+            GaussianBlur(trozoImagen, resultadoParcial, Size(factor,factor), 0,0,1); //Funcion maravillosa que realiza el difuminado de la imagen o el trozo de esta por el metodo de gauss.
         }
         if(opcion=="2")
         {
@@ -178,7 +185,10 @@ int main(int argc, char** argv ){
         }
 
         if(rank == 0)
+        {
             cout<<"\nFinalizacion exitosa.\n";
+            integrantes();
+        }
         MPI_Finalize();
     }
     else
@@ -186,7 +196,6 @@ int main(int argc, char** argv ){
         cout<<"\nArgumentos mal ingresados, ej) ./dist/programa [Num.opcion] [path imagen]\n";
         return EXIT_FAILURE;
     }
-    integrantes();
     return EXIT_SUCCESS;
 }
 
