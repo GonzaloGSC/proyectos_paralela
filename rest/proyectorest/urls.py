@@ -19,10 +19,15 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v0.01/', include('puntajes.urls')),
+    #path('api/v0.01/', include('puntajes.urls')),
     path('api/v0.01/codigo',views.buscarcodigo.as_view()),
-    path('api/v0.01/search',views.CarrerasListView.as_view()),
+    path('api/v0.01/autor',views.autoresF.as_view()),
+    #path('api/v0.01/search',views.CarrerasListView.as_view()),
     path('api/v0.01/carrera',views.buscarcarrera.as_view()),
+    path('api/v0.01/postular',views.postular.as_view()),
+
+    # path('consulta1View', views.Consulta1ListView.as_view()),#wea magica
+
     path('api/v1/auth/',
         include('rest_auth.urls')),
     path('api/v1/auth/registration/', 

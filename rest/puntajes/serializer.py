@@ -6,6 +6,11 @@ class postulanteSerializer(serializers.ModelSerializer):
         model = postulante
         fields = '__all__'
 
+class codigoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = postulante
+        fields = ('Codigo',)
+
 class autoresSerializer(serializers.ModelSerializer):
     class Meta:
         model = autores

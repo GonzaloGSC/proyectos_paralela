@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    # 'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +137,10 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
   'DEFAULT_PERMISSION_CLASSES': [                     
-    'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    'rest_framework.permissions.AllowAny',
   ],
 }
+
 
 SITE_ID = 1
 
