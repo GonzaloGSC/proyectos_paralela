@@ -6,3 +6,6 @@
 *.zip
 *.json
 *.txt
+/paralelo/imagenmpi/dist/
+/paralelo/imagenmpi/build/
+/paralelo/build/
