@@ -1,18 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////LIBRERIAS///////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
-// #include <cstdlib>
-#include <opencv4/opencv2/opencv_modules.hpp>
-// #include <opencv4/opencv2/photo.hpp>
-#include <opencv4/opencv2/opencv.hpp>
-// #include <opencv4/opencv2/core/core.hpp>
-// #include <opencv4/opencv2/core.hpp>
 #include <mpi.h>
 #include <string>
 #include <vector>
 #include <ctime>
-// #include <cmath>
-// #include <pthread.h>
+#include <opencv4/opencv2/opencv_modules.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 
 using namespace cv;
 using namespace std;
